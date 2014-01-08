@@ -90,7 +90,7 @@ public class MainActivity extends FragmentActivity implements
 		this.registerReceiver(collector.batteryInfoReceiver,new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
 		
 		//TODO: Get application
-		getApplictionList();
+		//getApplictionList();
 	}
 	
 	public void getApplictionList (){

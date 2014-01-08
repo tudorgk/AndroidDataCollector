@@ -1,5 +1,8 @@
 package com.example.androiddatacollector;
 
+import java.util.List;
+
+import android.content.pm.ApplicationInfo;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
@@ -7,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 import android.widget.TextView;
 
 public class ApplicationList extends ListFragment {
@@ -20,16 +24,19 @@ public class ApplicationList extends ListFragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		View rootView = inflater.inflate(R.layout.aplication_list,
+		View rootView = inflater.inflate(R.layout.application_list,
 				container, false);
-		 String[] values = new String[] { "Android", "iPhone", "WindowsMobile",
-			        "Blackberry", "WebOS", "Ubuntu", "Windows7", "Max OS X",
-			        "Linux", "OS/2", "Ubuntu", "Windows7", "Max OS X", "Linux",
-			        "OS/2", "Ubuntu", "Windows7", "Max OS X", "Linux", "OS/2" };
-
-		 ApplicationArrayAdapter adapter = new ApplicationArrayAdapter(getActivity(),android.R.layout.simple_list_item_1, values);
-		 setListAdapter(adapter);
-		Log.d("List", "pula");
+		 
+		//getting the installed app list
+		 List<ApplicationInfo> apps = getActivity().getPackageManager().getInstalledApplications(0);
+		 //WORKS!
+		 Log.d("applications", apps.toString());
+		 
+		ApplicationArrayAdapter adapter = new ApplicationArrayAdapter(getActivity(),android.R.layout.simple_list_item_1, apps);
+		setListAdapter(adapter);
+		
+		
+		
 //		TextView dummyTextView = (TextView) rootView
 //				.findViewById(R.id.section_label);
 //		dummyTextView.setText("pula");
@@ -42,5 +49,11 @@ public class ApplicationList extends ListFragment {
 //		dummyTextView.setText(collector.BatteryInfo);
 		return rootView;
 	}
+	
+	@Override
+	  public void onListItemClick(ListView l, View v, int position, long id) {
+	    // do something with the data
+		Log.d("clicked", "YES");
+	  }
 
 }
