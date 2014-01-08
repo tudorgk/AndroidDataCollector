@@ -4,6 +4,11 @@ package com.example.androiddatacollector;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.BatteryManager;
 import android.os.Environment;
 import android.os.StatFs;
 import android.util.Log;
@@ -28,6 +33,37 @@ public class StaticAndroidCollector {
 	public String Serial;
 	public String User;
 	public String Host;
+	public String BatteryInfo;
+	
+	public BroadcastReceiver batteryInfoReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			
+			int  health= intent.getIntExtra(BatteryManager.EXTRA_HEALTH,0);
+			int  icon_small= intent.getIntExtra(BatteryManager.EXTRA_ICON_SMALL,0);
+			int  level= intent.getIntExtra(BatteryManager.EXTRA_LEVEL,0);
+			int  plugged= intent.getIntExtra(BatteryManager.EXTRA_PLUGGED,0);
+			boolean  present= intent.getExtras().getBoolean(BatteryManager.EXTRA_PRESENT); 
+			int  scale= intent.getIntExtra(BatteryManager.EXTRA_SCALE,0);
+			int  status= intent.getIntExtra(BatteryManager.EXTRA_STATUS,0);
+			String  technology= intent.getExtras().getString(BatteryManager.EXTRA_TECHNOLOGY);
+			int  temperature= intent.getIntExtra(BatteryManager.EXTRA_TEMPERATURE,0);
+			int  voltage= intent.getIntExtra(BatteryManager.EXTRA_VOLTAGE,0);
+			
+ 
+			BatteryInfo =
+					"Health: "+health+"\n"+
+					"Icon Small:"+icon_small+"\n"+
+					"Level: "+level+"\n"+
+					"Plugged: "+plugged+"\n"+
+					"Present: "+present+"\n"+
+					"Scale: "+scale+"\n"+
+					"Status: "+status+"\n"+
+					"Technology: "+technology+"\n"+
+					"Temperature: "+temperature+"\n"+
+					"Voltage: "+voltage+"\n";
+		}
+	};
 	
 	public StaticAndroidCollector() {
 		// TODO Auto-generated constructor stub
@@ -58,18 +94,12 @@ public class StaticAndroidCollector {
 	        reader = new RandomAccessFile("/proc/meminfo", "r");
 	        freeMemory = reader.readLine();
 	        memInfo = reader.readLine();
+	        reader.close();
 	    } catch (IOException ex) {
 	        ex.printStackTrace();
 	    } finally {
 	       
 	    }
-	    
-	    try {
-			reader.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	    
 	    Log.d("memory", freeMemory);
 	    Log.d("memory", memInfo);
@@ -102,7 +132,6 @@ public class StaticAndroidCollector {
 	        Log.d("memory", "Used Memory: " + Long.toString(Busy));
 	        return Busy;
 	    }
-	
 	
 	@Override
 	public String toString() {

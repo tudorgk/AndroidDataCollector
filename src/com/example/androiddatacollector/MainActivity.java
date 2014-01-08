@@ -1,10 +1,14 @@
 package com.example.androiddatacollector;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Locale;
 
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.pm.ApplicationInfo;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -12,6 +16,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.NavUtils;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -38,11 +43,13 @@ public class MainActivity extends FragmentActivity implements
 	 */
 	ViewPager mViewPager;
 
+	//Creating the Static Data Collector
+	static StaticAndroidCollector collector=new StaticAndroidCollector();
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-
 		// Set up the action bar.
 		final ActionBar actionBar = getActionBar();
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
@@ -77,6 +84,20 @@ public class MainActivity extends FragmentActivity implements
 					.setText(mSectionsPagerAdapter.getPageTitle(i))
 					.setTabListener(this));
 		}
+		
+		
+		//TODO: Battery Test
+		this.registerReceiver(collector.batteryInfoReceiver,new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+		
+		//TODO: Get application
+		getApplictionList();
+	}
+	
+	public void getApplictionList (){
+		List<ApplicationInfo> apps = this.getPackageManager().getInstalledApplications(0);
+		//WORKS!
+		Log.d("applications", apps.toString());
+		
 	}
 
 	@Override
@@ -119,11 +140,27 @@ public class MainActivity extends FragmentActivity implements
 			// getItem is called to instantiate the fragment for the given page.
 			// Return a DummySectionFragment (defined as a static inner class
 			// below) with the page number as its lone argument.
-			Fragment fragment = new DummySectionFragment();
-			Bundle args = new Bundle();
-			args.putInt(DummySectionFragment.ARG_SECTION_NUMBER, position + 1);
-			fragment.setArguments(args);
+			Fragment fragment;
+			
+			switch (position) {
+			case 2:
+			{
+				fragment = new ApplicationList();
+			}
+			break;
+			default:
+			{
+				fragment = new DummySectionFragment();
+			}
+			break;
+			}
+			
+//			Bundle args = new Bundle();			
+//			args.putInt(fragment.ARG_SECTION_NUMBER, position + 1);
+//			fragment.setArguments(args);
+			
 			return fragment;
+			
 		}
 
 		@Override
@@ -170,7 +207,7 @@ public class MainActivity extends FragmentActivity implements
 					.findViewById(R.id.section_label);
 			
 			//TODO: Just for testing 
-			StaticAndroidCollector collector=new StaticAndroidCollector();
+			
 			
 			//dummyTextView.setText(Integer.toString(getArguments().getInt(
 			//		ARG_SECTION_NUMBER)));
@@ -179,6 +216,8 @@ public class MainActivity extends FragmentActivity implements
 			collector.getTotalMemory();
 			collector.getFreeMemory();
 			collector.getBusyMemory();
+			Log.d("battery", collector.BatteryInfo);
+			dummyTextView.setText(collector.BatteryInfo);
 			return rootView;
 		}
 	}
