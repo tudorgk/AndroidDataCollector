@@ -1,8 +1,10 @@
-package com.example.androiddatacollector;
+package com.tudordev.androiddatacollector;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
+
+import com.example.androiddatacollector.R;
 
 import android.app.ActionBar;
 import android.app.FragmentTransaction;

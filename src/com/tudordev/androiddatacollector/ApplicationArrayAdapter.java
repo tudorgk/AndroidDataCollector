@@ -1,6 +1,8 @@
-package com.example.androiddatacollector;
+package com.tudordev.androiddatacollector;
 
 import java.util.List;
+
+import com.example.androiddatacollector.R;
 
 import android.content.Context;
 import android.content.pm.ApplicationInfo;

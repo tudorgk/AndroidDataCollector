@@ -1,4 +1,4 @@
-package com.example.androiddatacollector;
+package com.tudordev.androiddatacollector;
 
 
 import java.io.IOException;

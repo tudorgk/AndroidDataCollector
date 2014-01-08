@@ -1,8 +1,13 @@
-package com.example.androiddatacollector;
+package com.tudordev.androiddatacollector;
 
 import java.util.List;
 
+import com.example.androiddatacollector.R;
+import com.tudordev.powerusageservice.PowerUsageScanner;
+
+import android.content.Intent;
 import android.content.pm.ApplicationInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
@@ -52,8 +57,12 @@ public class ApplicationList extends ListFragment {
 	
 	@Override
 	  public void onListItemClick(ListView l, View v, int position, long id) {
-	    // do something with the data
-		Log.d("clicked", "YES");
+	    
+		ApplicationInfo item = (ApplicationInfo) getListAdapter().getItem(position);
+		Intent mServiceIntent = new Intent(getActivity(), PowerUsageScanner.class);
+		mServiceIntent.setData(Uri.parse(item.toString()));
+		this.getActivity().startService(mServiceIntent);
+		Log.d("Click", item.toString());
 	  }
 
 }
