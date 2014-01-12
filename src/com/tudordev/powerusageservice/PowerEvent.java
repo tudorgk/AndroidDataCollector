@@ -21,6 +21,7 @@ public class PowerEvent {
 	private long cpuTime;
 	private long gpsTime;
 	private long cpuFgTime;
+	private double powerDrain;
 	private double percent;
 	private double noCoveragePercent;
 	private String defaultPackageName;
@@ -136,5 +137,13 @@ public class PowerEvent {
 		// Return the flipped value because we want the items in descending
 		// order
 		return (int) (other.getSortValue() - getSortValue());
+	}
+
+	public double getPowerDrain() {
+		return powerDrain;
+	}
+
+	public void setPowerDrain(double powerDrain) {
+		this.powerDrain = powerDrain;
 	}
 }

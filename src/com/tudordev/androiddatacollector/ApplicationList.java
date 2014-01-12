@@ -2,9 +2,11 @@ package com.tudordev.androiddatacollector;
 
 import java.util.List;
 
-import com.example.androiddatacollector.R;
+import com.tudordev.androiddatacollector.R;
 import com.tudordev.powerusageservice.PowerUsageScanner;
 
+import android.app.ActivityManager;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.net.Uri;
@@ -35,7 +37,7 @@ public class ApplicationList extends ListFragment {
 		//getting the installed app list
 		 List<ApplicationInfo> apps = getActivity().getPackageManager().getInstalledApplications(0);
 		 //WORKS!
-		 Log.d("applications", apps.toString());
+		 //Log.d("applications", apps.toString());
 		 
 		ApplicationArrayAdapter adapter = new ApplicationArrayAdapter(getActivity(),android.R.layout.simple_list_item_1, apps);
 		setListAdapter(adapter);
@@ -44,7 +46,6 @@ public class ApplicationList extends ListFragment {
 		
 //		TextView dummyTextView = (TextView) rootView
 //				.findViewById(R.id.section_label);
-//		dummyTextView.setText("pula");
 //		dummyTextView.setText(collector.toString());
 //		collector.getRAMInfo();
 //		collector.getTotalMemory();
@@ -57,12 +58,13 @@ public class ApplicationList extends ListFragment {
 	
 	@Override
 	  public void onListItemClick(ListView l, View v, int position, long id) {
-	    
 		ApplicationInfo item = (ApplicationInfo) getListAdapter().getItem(position);
-		Intent mServiceIntent = new Intent(getActivity(), PowerUsageScanner.class);
-		mServiceIntent.setData(Uri.parse(item.toString()));
-		this.getActivity().startService(mServiceIntent);
 		Log.d("Click", item.toString());
+		
+		Intent myIntent = new Intent(getActivity().getApplicationContext(), ApplicationPowerUsageList.class);
+		myIntent.putExtra("application", item.packageName); //Optional parameters
+		getActivity().startActivity(myIntent);
+		
 	  }
 
 }

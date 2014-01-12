@@ -3,14 +3,21 @@ package com.tudordev.powerusageservice;
 import java.util.ArrayList;
 
 import android.app.Activity;
+import android.app.ActivityManager;
+import android.app.AlertDialog;
 import android.app.IntentService;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Parcel;
 import android.util.Log;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import com.tudordev.powerusageservice.PowerEvent;
 import com.tudordev.powerusageservice.RecordingStrategy;
@@ -25,23 +32,11 @@ import android.util.Log;
 import android.util.SparseArray;
 
 
-public class PowerUsageScanner extends IntentService {
+public class PowerUsageScanner extends Thread {
 
-	public PowerUsageScanner(String name) {
-		super(name);
-		// TODO Auto-generated constructor stub
-	}
+	ActivityManager am;
+	Timer myTimer;
 
-	@Override
-	protected void onHandleIntent(Intent workIntent) {
-		// Gets data from the incoming Intent
-        String dataString = workIntent.getDataString();
-        
-        // Do work here, based on the contents of dataString
-       Log.d("Service reply", dataString);
-	}
-
-	
 	private static final String TAG = "PowerInterfaceAdapter";
 	private static final String BATTERY_STATS_IMPL_CLASS = "com.android.internal.os.BatteryStatsImpl";
 	private static final String POWER_PROFILE_CLASS = "com.android.internal.os.PowerProfile";
@@ -52,6 +47,7 @@ public class PowerUsageScanner extends IntentService {
 	private static final String SENSOR_CLASS = UID_CLASS + "$Sensor";
 	private static final String BATTER_STATS_TIMER_CLASS = BATTERY_STATS_CLASS + "$Timer";
 
+	private int pollingRate = 10;
 
 	private Object mBatteryInfo_;
 	private Object mStats_;
@@ -60,15 +56,54 @@ public class PowerUsageScanner extends IntentService {
 	private Activity parent_;
 	private ArrayList<RecordingStrategy> recorder_ = new ArrayList<RecordingStrategy> ();
 
-	public void addRecorder(RecordingStrategy rs){
-		recorder_.add(rs);
+	//the data from the scanner
+	private HashMap<String, ArrayList<PowerEvent>> powerData = new HashMap<String, ArrayList<PowerEvent>>();
+
+	private static PowerUsageScanner sharedScanner;
+	// Note that the constructor is private
+	private PowerUsageScanner() {
+		// Optional Code
+	}
+	public static PowerUsageScanner getSingletonObject() {
+		if (sharedScanner == null) {
+			sharedScanner = new PowerUsageScanner();
+		}
+		return sharedScanner;
+	}
+	public void initSingletonObject(Context context) {
+		parent_=(Activity) context;
+	}
+
+
+	@Override
+	public void run() {
+
+		myTimer = new Timer();
+		TimerTask task = new TimerTask() {
+			@Override
+			public void run() {
+				
+				if(pollingRate!=0){
+					processApplicationUsage("test");
+					pollingRate--;
+				}
+				else{
+					myTimer.cancel();
+				}
+
+			}
+
+		};
+
+		//adding timer fire for every minute	
+		myTimer.schedule(task, 0, 60 * 1000);
 	}
 
 	private void load(){
 		try{
 
 			byte[] data = (byte[])Class.forName(M_BATTERY_INFO_CLASS).getMethod("getStatistics", null)
-			.invoke(mBatteryInfo_, null);
+					.invoke(mBatteryInfo_, null);
 			Parcel parcel = Parcel.obtain();
 			parcel.unmarshall(data, 0, data.length);
 			parcel.setDataPosition(0);
@@ -77,9 +112,11 @@ public class PowerUsageScanner extends IntentService {
 			 * mStats = com.android.internal.os.BatteryStatsImpl.CREATOR.createFromParcel(parcel);
 			 */
 			mStats_ = Class.forName(BATTERY_STATS_IMPL_CLASS)
-			.getField("CREATOR").getType().getMethod("createFromParcel", Parcel.class)
-			.invoke(
-					Class.forName(BATTERY_STATS_IMPL_CLASS).getField("CREATOR").get(null), parcel);
+					.getField("CREATOR").getType().getMethod("createFromParcel", Parcel.class)
+					.invoke(
+							Class.forName(BATTERY_STATS_IMPL_CLASS).getField("CREATOR").get(null), parcel);
+			
+			Log.d(TAG, mStats_.toString());
 
 		}catch(InvocationTargetException e){
 			Log.e("BatteryTester", "Exception: " + e);
@@ -104,8 +141,8 @@ public class PowerUsageScanner extends IntentService {
 	 */
 	public void processApplicationUsage(String label){
 
-		//TODO: get the activity instance
-		parent_ = SPOT.getInstance();
+		//TODO: get the activity instance 
+
 		try {
 
 			mBatteryInfo_ = Class.forName("com.android.internal.app.IBatteryStats$Stub").getDeclaredMethod("asInterface", 
@@ -138,7 +175,7 @@ public class PowerUsageScanner extends IntentService {
 			final double averageCostPerByte = getAverageDataCost();
 			final int which = mStatsType_;
 			long uSecTime = (Long)Class.forName(BATTERY_STATS_IMPL_CLASS).getMethod("computeBatteryRealtime", java.lang.Long.TYPE, java.lang.Integer.TYPE)
-			.invoke(mStats_, SystemClock.elapsedRealtime() * 1000, which);
+					.invoke(mStats_, SystemClock.elapsedRealtime() * 1000, which);
 			updateStatsPeriod(uSecTime);
 
 			SparseArray uidStats = (SparseArray)Class.forName(BATTERY_STATS_IMPL_CLASS).getMethod("getUidStats", null).invoke(mStats_, null);
@@ -146,20 +183,25 @@ public class PowerUsageScanner extends IntentService {
 			for (int iu = 0; iu < NU; iu++){
 				Object u = uidStats.valueAt(iu);
 				double power = 0;
-				
+
 				String packageWithHighestDrain = "";
 				Map<String, Object> processStats = (Map)Class.forName(UID_CLASS).getMethod("getProcessStats", (Class[])null).invoke(u, null);
 				long cpuTime = 0;
 				long cpuFgTime = 0;
 				long gpsTime = 0;
 
+				//				Log.d("uidStats", processStats.toString());
+
 				//Process cpu usage
 				if(processStats.size() > 0){
 					for (Map.Entry<String, Object> ent: processStats.entrySet()){
 						packageWithHighestDrain = ent.getKey();
-						if (!ent.getKey().contains("org.spot.android"))
-							continue;
+						//if (!ent.getKey().contains("org.spot.android"))
+						//	continue;
 
+						//initializing the array
+						if(packageWithHighestDrain!=null && powerData.get(packageWithHighestDrain)==null)
+							powerData.put(packageWithHighestDrain, new ArrayList<PowerEvent>());
 
 						Object ps = ent.getValue();
 						final long userTime = (Long)Class.forName(PROC_CLASS).getMethod("getUserTime", java.lang.Integer.TYPE).invoke(ps, which);
@@ -170,7 +212,7 @@ public class PowerUsageScanner extends IntentService {
 						final double processPower = tmpCpuTime * powerCpuNormal;
 
 						cpuTime += tmpCpuTime;
-						Log.d(TAG, "CPU Time " + cpuTime);
+//						Log.d(TAG, "CPU Time " + cpuTime);
 						power += processPower;
 
 						//						if (highestDrain < processPower){
@@ -181,8 +223,8 @@ public class PowerUsageScanner extends IntentService {
 
 					}
 				}
-				if (!packageWithHighestDrain.contains("org.spot.android"))
-					continue;	
+				//if (!packageWithHighestDrain.contains("org.spot.android"))
+				//	continue;	
 
 				//Calculate network usage
 				//This doesn't currently work, adds zero
@@ -197,8 +239,8 @@ public class PowerUsageScanner extends IntentService {
 					int sensorType = (Integer)Class.forName(SENSOR_CLASS).getMethod("getHandle", (Class[])null).invoke(sensor);
 					Object timer = Class.forName(SENSOR_CLASS).getMethod("getSensorTime", (Class[])null).invoke(sensor);
 					long sensorTime = (Long)Class.forName(BATTER_STATS_TIMER_CLASS)
-					.getMethod("getTotalTimeLocked", java.lang.Long.TYPE, java.lang.Integer.TYPE)
-					.invoke(timer, uSecTime, which);
+							.getMethod("getTotalTimeLocked", java.lang.Long.TYPE, java.lang.Integer.TYPE)
+							.invoke(timer, uSecTime, which);
 					double multiplier = 0;
 
 					switch(sensorType){
@@ -221,17 +263,24 @@ public class PowerUsageScanner extends IntentService {
 					power += (multiplier * sensorTime) /1000;
 				}
 				Log.d(TAG, "Power for package " + packageWithHighestDrain + " equal to " + power);
-				if (power != 0){
-					PowerEvent app = new PowerEvent(label, PowerEvent.DrainType.APP, 0, u, new double[] {power});
-					app.setCpuTime(cpuTime);
-					app.setGpsTime(gpsTime);
-					app.setCpuFgTime(cpuFgTime);
-					
-					for (RecordingStrategy record: recorder_){
-						record.record(app);
-					}
+				Log.d(TAG, "CPU Time " + cpuTime);
+				PowerEvent app = new PowerEvent(label, PowerEvent.DrainType.APP, 0, u, new double[] {power});
+				app.setCpuTime(cpuTime);
+				app.setGpsTime(gpsTime);
+				app.setCpuFgTime(cpuFgTime);
+				app.setPowerDrain(power);
 
+				if(packageWithHighestDrain!=null){
+					
+					Log.d("PowerEvent", "PackageName: " + packageWithHighestDrain + "\nPowerEvent: " + app.toString() + "\n");
+					if(powerData.get(packageWithHighestDrain)!=null)
+						powerData.get(packageWithHighestDrain).add(app);		
 				}
+
+				//for (RecordingStrategy record: recorder_){
+				//	record.record(app);
+				//	addRecorder(record);
+				//}
 
 
 
@@ -257,6 +306,15 @@ public class PowerUsageScanner extends IntentService {
 
 		return 0.0;
 	}
+
+	public HashMap<String, ArrayList<PowerEvent>> getPowerData() {
+		return powerData;
+	}
+
+	public void setPowerData(HashMap<String, ArrayList<PowerEvent>> powerData) {
+		this.powerData = powerData;
+	}
+
 
 
 	private void updateStatsPeriod(long uSecTime){
@@ -443,6 +501,8 @@ public class PowerUsageScanner extends IntentService {
 		public static final int STATS_UNPLUGGED = 3;
 
 	}
+
+
 
 
 }

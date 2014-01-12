@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" >
+	
+    <TextView
+        android:id="@+id/CPUTimeLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="4dp"
+        android:textColor="#000000"
+        android:text="CPU Time" />
+
+    <TextView
+        android:id="@+id/GPSTimeLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/CPUTimeLabel"
+        android:layout_below="@id/CPUTimeLabel"
+        android:layout_marginBottom="4dp"
+        android:textColor="#000000"
+        android:text="GPS Time"/>
+
+    <TextView
+        android:id="@+id/PowerLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/GPSTimeLabel"
+        android:layout_below="@id/GPSTimeLabel"
+        android:text="Power Usage"
+        android:textColor="#000000"/>
+
+    <TextView
+        android:id="@+id/PowerValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/PowerLabel"
+        android:layout_alignRight="@+id/GPSTimeValue"
+        android:textColor="#000000"
+        android:text="power"/>
+
+    <TextView
+        android:id="@+id/CPUTimeValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/GPSTimeValue"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="19dp"
+        android:textColor="#000000"
+        android:text="cpu"/>
+
+    <TextView
+        android:id="@+id/GPSTimeValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@id/GPSTimeLabel"
+        android:layout_alignBottom="@id/GPSTimeLabel"
+        android:layout_alignLeft="@id/CPUTimeValue"
+        android:layout_marginRight="19dp"
+        android:textColor="#000000"
+        android:text="gps"/>
+
+</RelativeLayout>

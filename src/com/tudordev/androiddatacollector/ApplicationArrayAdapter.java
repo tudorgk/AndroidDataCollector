@@ -2,7 +2,7 @@ package com.tudordev.androiddatacollector;
 
 import java.util.List;
 
-import com.example.androiddatacollector.R;
+import com.tudordev.androiddatacollector.R;
 
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
@@ -76,13 +76,7 @@ public class ApplicationArrayAdapter extends ArrayAdapter<ApplicationInfo> {
 	    
 	    Drawable icon = this.context.getPackageManager().getApplicationIcon(appList.get(position));
 	    imageView.setImageDrawable(icon);
-	    // Change the icon for Windows and iPhone
-	    //String s = values[position];
-//	    if (s.startsWith("iPhone")) {	
-//	    	imageView.setImageResource(R.drawable.ic_launcher);
-//	    } else {
-//	//      imageView.setImageResource(R.drawable.ok);
-//	    }
+
 
 	    return rowView;
 	  }

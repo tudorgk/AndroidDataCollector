@@ -4,9 +4,12 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
-import com.example.androiddatacollector.R;
+import com.tudordev.androiddatacollector.R;
+import com.tudordev.powerusageservice.PowerUsageScanner;
+import com.tudordev.powerusageservice.StaticAndroidCollector;
 
 import android.app.ActionBar;
+import android.app.ActivityManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -39,6 +42,12 @@ public class MainActivity extends FragmentActivity implements
 	 * {@link android.support.v4.app.FragmentStatePagerAdapter}.
 	 */
 	SectionsPagerAdapter mSectionsPagerAdapter;
+	
+	PowerUsageScanner myPowerUsageScanner;
+	
+	public PowerUsageScanner getMyPowerUsageScanner() {
+		return myPowerUsageScanner;
+	}
 
 	/**
 	 * The {@link ViewPager} that will host the section contents.
@@ -93,6 +102,12 @@ public class MainActivity extends FragmentActivity implements
 		
 		//TODO: Get application
 		//getApplictionList();
+		
+		//TODO: Start Application Monitor Service
+		myPowerUsageScanner = PowerUsageScanner.getSingletonObject();
+		myPowerUsageScanner.initSingletonObject(this);
+		myPowerUsageScanner.start();
+		
 	}
 	
 	public void getApplictionList (){
