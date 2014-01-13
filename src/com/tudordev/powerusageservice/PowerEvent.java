@@ -21,7 +21,36 @@ public class PowerEvent {
 	private long cpuTime;
 	private long gpsTime;
 	private long cpuFgTime;
+	
+	private long tcpBytesReceived;
+	private long tcpBytesSent;
+	
+	public long getTcpBytesReceived() {
+		return tcpBytesReceived;
+	}
+
+	public void setTcpBytesReceived(long tcpBytesReceived) {
+		this.tcpBytesReceived = tcpBytesReceived;
+	}
+
+	public long getTcpBytesSent() {
+		return tcpBytesSent;
+	}
+
+	public void setTcpBytesSent(long tcpBytesSent) {
+		this.tcpBytesSent = tcpBytesSent;
+	}
+
+	public double getWifiPowerDrain() {
+		return wifiPowerDrain;
+	}
+
+	public void setWifiPowerDrain(double wifiPowerDrain) {
+		this.wifiPowerDrain = wifiPowerDrain;
+	}
+
 	private double powerDrain;
+	private double wifiPowerDrain;
 	private double percent;
 	private double noCoveragePercent;
 	private String defaultPackageName;

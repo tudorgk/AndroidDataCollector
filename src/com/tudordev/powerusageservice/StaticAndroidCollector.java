@@ -34,7 +34,26 @@ public class StaticAndroidCollector {
 	public String User;
 	public String Host;
 	public String BatteryInfo;
+	public String DeviceInfo;
+	public String RAMTotal;
+	public String RAMFree;
 	
+	public String getDeviceInfo() {
+		getRAMInfo();
+		
+		DeviceInfo = "Device Model: "+DeviceModel+"\n"+
+				"Android OS Version: "+VersionNr+"\n"+
+				RAMTotal +"\n"+
+				RAMFree  +"\n"+
+				"Total Disk Space: : "+Long.toString(getTotalMemory())+"\n"+
+				"Total Disk Space: : "+Long.toString(getFreeMemory())+"\n"+
+				"CPU: "+CPU_ABI+"\n"+
+				"Brand: "+Brand+"\n"+
+				"Product: "+Product+"\n"+
+				"Version Number: "+OSVersion+"\n";
+		return DeviceInfo;
+	}
+
 	public BroadcastReceiver batteryInfoReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
@@ -87,23 +106,20 @@ public class StaticAndroidCollector {
 	
 	public String getRAMInfo() {
 	    RandomAccessFile reader = null;
-	    String memInfo = null;
-	    String freeMemory = null;
+	    RAMTotal = null;
+	    RAMFree = null;
 	    
 	    try {
 	        reader = new RandomAccessFile("/proc/meminfo", "r");
-	        freeMemory = reader.readLine();
-	        memInfo = reader.readLine();
+	        RAMFree = reader.readLine();
+	        RAMTotal = reader.readLine();
 	        reader.close();
 	    } catch (IOException ex) {
 	        ex.printStackTrace();
 	    } finally {
 	       
 	    }
-	    
-	    Log.d("memory", freeMemory);
-	    Log.d("memory", memInfo);
-	    return freeMemory;
+	    return RAMTotal;
 	}
 	
 	 public long getTotalMemory()

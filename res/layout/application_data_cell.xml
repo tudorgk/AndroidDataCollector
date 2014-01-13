@@ -20,7 +20,7 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@id/CPUTimeLabel"
         android:layout_below="@id/CPUTimeLabel"
-        android:layout_marginBottom="4dp"
+android:layout_marginTop="4dp"
         android:textColor="#000000"
         android:text="GPS Time"/>
 
@@ -30,24 +30,67 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@id/GPSTimeLabel"
         android:layout_below="@id/GPSTimeLabel"
+       android:layout_marginTop="4dp"
         android:text="Power Usage"
         android:textColor="#000000"/>
-
+    <TextView
+        android:id="@+id/BytesReceivedLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/PowerLabel"
+        android:layout_below="@id/PowerLabel"
+        android:layout_marginTop="4dp"
+        android:text="Bytes Received"
+        android:textColor="#000000"/>
+     <TextView
+        android:id="@+id/BytesSentLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/BytesReceivedLabel"
+        android:layout_below="@id/BytesReceivedLabel"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
+        android:text="Bytes Sent"
+        android:textColor="#000000"/>
     <TextView
         android:id="@+id/PowerValue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@id/PowerLabel"
         android:layout_alignRight="@+id/GPSTimeValue"
+        android:layout_marginBottom="4dp"
         android:textColor="#000000"
         android:text="power"/>
+
+    <TextView
+        android:id="@+id/BytesReceivedValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/BytesReceivedLabel"
+        android:layout_alignRight="@+id/GPSTimeValue"
+        android:layout_marginBottom="4dp"
+        android:textColor="#000000"
+        android:text="bytes_received"/>
+    <TextView
+        android:id="@+id/BytesSentValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/BytesSentLabel"
+        android:layout_alignRight="@+id/GPSTimeValue"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
+        android:textColor="#000000"
+        android:text="bytes_sent"/>
 
     <TextView
         android:id="@+id/CPUTimeValue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/CPUTimeLabel"
         android:layout_above="@+id/GPSTimeValue"
         android:layout_alignParentRight="true"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
         android:layout_marginRight="19dp"
         android:textColor="#000000"
         android:text="cpu"/>
@@ -60,6 +103,7 @@
         android:layout_alignBottom="@id/GPSTimeLabel"
         android:layout_alignLeft="@id/CPUTimeValue"
         android:layout_marginRight="19dp"
+        android:layout_marginTop="4dp"
         android:textColor="#000000"
         android:text="gps"/>
 

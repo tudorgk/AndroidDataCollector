@@ -183,7 +183,9 @@ public class PowerUsageScanner extends Thread {
 			for (int iu = 0; iu < NU; iu++){
 				Object u = uidStats.valueAt(iu);
 				double power = 0;
-
+				long tcpBytesReceived = 0;
+				long tcpBytesSent = 0;
+				double tcpPowerUsed = 0;
 				String packageWithHighestDrain = "";
 				Map<String, Object> processStats = (Map)Class.forName(UID_CLASS).getMethod("getProcessStats", (Class[])null).invoke(u, null);
 				long cpuTime = 0;
@@ -228,8 +230,9 @@ public class PowerUsageScanner extends Thread {
 
 				//Calculate network usage
 				//This doesn't currently work, adds zero
-				power += ((Long)Class.forName(UID_CLASS).getMethod("getTcpBytesReceived", java.lang.Integer.TYPE).invoke(u, mStatsType_) +
-						(Long)Class.forName(UID_CLASS).getMethod("getTcpBytesSent",java.lang.Integer.TYPE).invoke(u, mStatsType_)) *averageCostPerByte;
+				tcpBytesReceived = (Long)Class.forName(UID_CLASS).getMethod("getTcpBytesReceived", java.lang.Integer.TYPE).invoke(u, mStatsType_);
+				tcpBytesSent = (Long)Class.forName(UID_CLASS).getMethod("getTcpBytesSent",java.lang.Integer.TYPE).invoke(u, mStatsType_);
+				tcpPowerUsed += (tcpBytesReceived+ tcpBytesSent) * averageCostPerByte;
 
 				//Process sensor usage
 				Map<Integer, Object> sensorStats = (Map)Class.forName(UID_CLASS).getMethod("getSensorStats", (Class[])null).invoke(u);
@@ -269,7 +272,9 @@ public class PowerUsageScanner extends Thread {
 				app.setGpsTime(gpsTime);
 				app.setCpuFgTime(cpuFgTime);
 				app.setPowerDrain(power);
-
+				app.setTcpBytesReceived(tcpBytesReceived);
+				app.setTcpBytesSent(tcpBytesSent);
+				app.setWifiPowerDrain(tcpPowerUsed);
 				if(packageWithHighestDrain!=null){
 					
 					Log.d("PowerEvent", "PackageName: " + packageWithHighestDrain + "\nPowerEvent: " + app.toString() + "\n");
@@ -277,10 +282,6 @@ public class PowerUsageScanner extends Thread {
 						powerData.get(packageWithHighestDrain).add(app);		
 				}
 
-				//for (RecordingStrategy record: recorder_){
-				//	record.record(app);
-				//	addRecorder(record);
-				//}
 
 
 
@@ -302,8 +303,6 @@ public class PowerUsageScanner extends Thread {
 	}
 
 	private double getAverageDataCost(){
-
-
 		return 0.0;
 	}
 

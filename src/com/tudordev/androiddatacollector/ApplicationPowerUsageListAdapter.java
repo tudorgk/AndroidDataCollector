@@ -41,10 +41,15 @@ public class ApplicationPowerUsageListAdapter extends ArrayAdapter<PowerEvent> {
 		TextView cpuValuelabel = (TextView) rowView.findViewById(R.id.CPUTimeValue);
 		TextView gpsValueLabel = (TextView) rowView.findViewById(R.id.GPSTimeValue);
 		TextView powerUsageLabel= (TextView) rowView.findViewById(R.id.PowerValue);
-
+		TextView receivedBytesLabel= (TextView) rowView.findViewById(R.id.BytesReceivedValue);
+		TextView sentBytesLabel= (TextView) rowView.findViewById(R.id.BytesSentValue);
+		
+		
 		cpuValuelabel.setText(Long.toString(powerUsageData.get(position).getCpuTime()));
 		gpsValueLabel.setText(Long.toString(powerUsageData.get(position).getGpsTime()));
 		powerUsageLabel.setText(Double.toString(powerUsageData.get(position).getPowerDrain()));
+		receivedBytesLabel.setText(Long.toString(powerUsageData.get(position).getTcpBytesReceived()));
+		sentBytesLabel.setText(Long.toString(powerUsageData.get(position).getTcpBytesSent()));				
 		
 		return rowView;
 	}

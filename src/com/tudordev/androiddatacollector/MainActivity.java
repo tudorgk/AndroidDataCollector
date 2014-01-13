@@ -160,6 +160,19 @@ public class MainActivity extends FragmentActivity implements
 			Fragment fragment;
 			
 			switch (position) {
+			case 0:
+			{
+				fragment = new DummySectionFragment();
+				((DummySectionFragment) fragment).setType_(0);
+			}
+			break;
+			case 1:
+			{
+				fragment = new DummySectionFragment();
+				((DummySectionFragment) fragment).setType_(1);
+			}
+			break;
+			
 			case 2:
 			{
 				fragment = new ApplicationList();
@@ -212,6 +225,16 @@ public class MainActivity extends FragmentActivity implements
 		 */
 		public static final String ARG_SECTION_NUMBER = "section_number";
 
+		public int type_ = 0;
+		
+		public int getType_() {
+			return type_;
+		}
+
+		public void setType_(int type_) {
+			this.type_ = type_;
+		}
+
 		public DummySectionFragment() {
 		}
 
@@ -223,18 +246,11 @@ public class MainActivity extends FragmentActivity implements
 			TextView dummyTextView = (TextView) rootView
 					.findViewById(R.id.section_label);
 			
-			//TODO: Just for testing 
-			
-			
-			//dummyTextView.setText(Integer.toString(getArguments().getInt(
-			//		ARG_SECTION_NUMBER)));
-			dummyTextView.setText(collector.toString());
-			collector.getRAMInfo();
-			collector.getTotalMemory();
-			collector.getFreeMemory();
-			collector.getBusyMemory();
-			Log.d("battery", collector.BatteryInfo);
-			dummyTextView.setText(collector.BatteryInfo);
+			if (type_== 0) {
+				dummyTextView.setText(collector.getDeviceInfo());
+			}else{
+				dummyTextView.setText(collector.BatteryInfo);
+			}
 			return rootView;
 		}
 	}
