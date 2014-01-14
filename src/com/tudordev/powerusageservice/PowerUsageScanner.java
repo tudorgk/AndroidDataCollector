@@ -42,7 +42,9 @@ public class PowerUsageScanner extends Thread {
 	private static final String POWER_PROFILE_CLASS = "com.android.internal.os.PowerProfile";
 	private static final String M_BATTERY_INFO_CLASS = "com.android.internal.app.IBatteryStats";
 	private static final String BATTERY_STATS_CLASS = "android.os.BatteryStats";
+	private static final String TRAFFIC_CLASS = "android.net.TrafficStats";
 	private static final String UID_CLASS = BATTERY_STATS_CLASS + "$Uid";
+	private static final String UID_TRAFFIC_CLASS = TRAFFIC_CLASS + "$Uid";
 	private static final String PROC_CLASS = UID_CLASS + "$Proc";
 	private static final String SENSOR_CLASS = UID_CLASS + "$Sensor";
 	private static final String BATTER_STATS_TIMER_CLASS = BATTERY_STATS_CLASS + "$Timer";

@@ -45,8 +45,8 @@ public class StaticAndroidCollector {
 				"Android OS Version: "+VersionNr+"\n"+
 				RAMTotal +"\n"+
 				RAMFree  +"\n"+
-				"Total Disk Space: : "+Long.toString(getTotalMemory())+"\n"+
-				"Total Disk Space: : "+Long.toString(getFreeMemory())+"\n"+
+				"Total Disk Space: "+Double.toString(getTotalMemory())+"\n"+
+				"Free Disk Space: "+Double.toString(getFreeMemory())+"\n"+
 				"CPU: "+CPU_ABI+"\n"+
 				"Brand: "+Brand+"\n"+
 				"Product: "+Product+"\n"+
@@ -122,30 +122,30 @@ public class StaticAndroidCollector {
 	    return RAMTotal;
 	}
 	
-	 public long getTotalMemory()
+	 public double  getTotalMemory()
 	    {
-	        StatFs statFs = new StatFs(Environment.getRootDirectory().getAbsolutePath());   
-	        long Total = (statFs.getBlockCount() * statFs.getBlockSize()) / 1048576;
-	        Log.d("memory", "Total Memory: " + Long.toString(Total));
+	        StatFs statFs = new StatFs(Environment.getDataDirectory().getAbsolutePath());   
+	        double  Total = (statFs.getBlockCount() * statFs.getBlockSize()) / 1048576;
+	        Log.d("memory", "Total Memory: " + Double.toString(Total));
 	        return Total;
 	    }
 
-	    public long getFreeMemory()
+	    public double  getFreeMemory()
 	    {
-	        StatFs statFs = new StatFs(Environment.getRootDirectory().getAbsolutePath());
-	        long Free  = (statFs.getAvailableBlocks() * statFs.getBlockSize()) / 1048576;
-	        Log.d("memory", "Free Memory: " + Long.toString(Free));
+	        StatFs statFs = new StatFs(Environment.getDataDirectory().getAbsolutePath());
+	        double  Free  = (statFs.getAvailableBlocks() * statFs.getBlockSize()) / 1048576;
+	        Log.d("memory", "Free Memory: " + Double.toString(Free));
 	        return Free;
 	    }
 
-	    public long getBusyMemory()
+	    public double  getBusyMemory()
 	    {
-	        StatFs statFs = new StatFs(Environment.getRootDirectory().getAbsolutePath());   
-	        long Total = (statFs.getBlockCount() * statFs.getBlockSize()) / 1048576;
-	        long Free  = (statFs.getAvailableBlocks() * statFs.getBlockSize()) / 1048576;
-	        long Busy  = Total - Free;
+	        StatFs statFs = new StatFs(Environment.getDataDirectory().getAbsolutePath());   
+	        double  Total = (statFs.getBlockCount() * statFs.getBlockSize()) / 1048576;
+	        double  Free  = (statFs.getAvailableBlocks() * statFs.getBlockSize()) / 1048576;
+	        double  Busy  = Total - Free;
 	        
-	        Log.d("memory", "Used Memory: " + Long.toString(Busy));
+	        Log.d("memory", "Used Memory: " + Double.toString(Busy));
 	        return Busy;
 	    }
 	
