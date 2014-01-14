@@ -223,9 +223,7 @@ public class PowerUsageScanner extends Thread {
 						
 						
 					}
-				}
-				//if (!packageWithHighestDrain.contains("org.spot.android"))
-				//	continue;	
+				}	
 
 				//Calculate network usage
 				//This doesn't currently work, adds zero

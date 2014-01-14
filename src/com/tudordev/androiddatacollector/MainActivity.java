@@ -100,8 +100,6 @@ public class MainActivity extends FragmentActivity implements
 		//TODO: Battery Test
 		this.registerReceiver(collector.batteryInfoReceiver,new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
 		
-		//TODO: Get application
-		//getApplictionList();
 		
 		//TODO: Start Application Monitor Service
 		myPowerUsageScanner = PowerUsageScanner.getSingletonObject();
@@ -184,11 +182,7 @@ public class MainActivity extends FragmentActivity implements
 			}
 			break;
 			}
-			
-//			Bundle args = new Bundle();			
-//			args.putInt(fragment.ARG_SECTION_NUMBER, position + 1);
-//			fragment.setArguments(args);
-			
+					
 			return fragment;
 			
 		}
