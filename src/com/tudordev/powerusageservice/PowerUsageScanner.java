@@ -224,7 +224,8 @@ public class PowerUsageScanner extends Thread {
 						//							packageWithHighestDrain = ent.getKey();
 						//						}
 						power /= 1000;
-
+						
+						
 					}
 				}
 				//if (!packageWithHighestDrain.contains("org.spot.android"))
@@ -232,8 +233,15 @@ public class PowerUsageScanner extends Thread {
 
 				//Calculate network usage
 				//This doesn't currently work, adds zero
-				tcpBytesReceived = (Long)Class.forName(UID_CLASS).getMethod("getTcpBytesReceived", java.lang.Integer.TYPE).invoke(u, mStatsType_);
-				tcpBytesSent = (Long)Class.forName(UID_CLASS).getMethod("getTcpBytesSent",java.lang.Integer.TYPE).invoke(u, mStatsType_);
+				//tcpBytesReceived = (Long)Class.forName(UID_CLASS).getMethod("getTcpBytesReceived", java.lang.Integer.TYPE).invoke(u, mStatsType_);
+				//tcpBytesSent = (Long)Class.forName(UID_CLASS).getMethod("getTcpBytesSent",java.lang.Integer.TYPE).invoke(u, mStatsType_);
+				
+				//New method of getting the number of received/sent bytes
+				tcpBytesReceived = (Long)Class.forName(TRAFFIC_CLASS).getMethod("getTotalRxBytes", (Class[])null).invoke(u);
+				tcpBytesSent = (Long)Class.forName(TRAFFIC_CLASS).getMethod("getTotalTxBytes",(Class[])null).invoke(u);
+				Log.d("SENT/RECEIVED", "Received: " + Long.toString(tcpBytesReceived) + "\nSent: " + Long.toString(tcpBytesSent));
+				
+				
 				tcpPowerUsed += (tcpBytesReceived+ tcpBytesSent) * averageCostPerByte;
 
 				//Process sensor usage
