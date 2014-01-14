@@ -42,17 +42,6 @@ public class ApplicationList extends ListFragment {
 		ApplicationArrayAdapter adapter = new ApplicationArrayAdapter(getActivity(),android.R.layout.simple_list_item_1, apps);
 		setListAdapter(adapter);
 		
-		
-		
-//		TextView dummyTextView = (TextView) rootView
-//				.findViewById(R.id.section_label);
-//		dummyTextView.setText(collector.toString());
-//		collector.getRAMInfo();
-//		collector.getTotalMemory();
-//		collector.getFreeMemory();
-//		collector.getBusyMemory();
-//		Log.d("battery", collector.BatteryInfo);
-//		dummyTextView.setText(collector.BatteryInfo);
 		return rootView;
 	}
 	
