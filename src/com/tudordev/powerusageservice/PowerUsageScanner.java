@@ -46,7 +46,6 @@ public class PowerUsageScanner extends Thread {
 	private static final String BATTERY_STATS_CLASS = "android.os.BatteryStats";
 	private static final String TRAFFIC_CLASS = "android.net.TrafficStats";
 	private static final String UID_CLASS = BATTERY_STATS_CLASS + "$Uid";
-	private static final String UID_TRAFFIC_CLASS = TRAFFIC_CLASS + "$Uid";
 	private static final String PROC_CLASS = UID_CLASS + "$Proc";
 	private static final String SENSOR_CLASS = UID_CLASS + "$Sensor";
 	private static final String BATTER_STATS_TIMER_CLASS = BATTERY_STATS_CLASS + "$Timer";
@@ -236,11 +235,11 @@ public class PowerUsageScanner extends Thread {
 				//New method of getting the number of received/sent bytes
 				int uid = (Integer)Class.forName(UID_CLASS).getMethod("getUid",  (Class[])null).invoke(u);
 				Log.d("UID", Integer.toString(uid));				
-				tcpBytesReceived = TrafficStats.getUidTcpRxBytes(uid);
-				tcpBytesSent = TrafficStats.getUidTcpTxBytes(uid);
+				//tcpBytesReceived = TrafficStats.getUidTcpRxBytes(uid);
+				//tcpBytesSent = TrafficStats.getUidTcpTxBytes(uid);
 				
-				//tcpBytesReceived = (Long)Class.forName(TRAFFIC_CLASS).getMethod("getTotalRxBytes", (Class[])null).invoke(u);
-				//tcpBytesSent = (Long)Class.forName(TRAFFIC_CLASS).getMethod("getTotalTxBytes",(Class[])null).invoke(u);
+				tcpBytesReceived = (Long)Class.forName(TRAFFIC_CLASS).getMethod("getTotalRxBytes", (Class[])null).invoke(u);
+				tcpBytesSent = (Long)Class.forName(TRAFFIC_CLASS).getMethod("getTotalTxBytes",(Class[])null).invoke(u);
 				Log.d("SENT/RECEIVED", "Received: " + Long.toString(tcpBytesReceived) + "\nSent: " + Long.toString(tcpBytesSent));
 				
 				
