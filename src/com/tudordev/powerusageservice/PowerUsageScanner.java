@@ -8,8 +8,10 @@ import android.app.AlertDialog;
 import android.app.IntentService;
 import android.content.ComponentName;
 import android.content.Intent;
+import android.net.TrafficStats;
 import android.os.Parcel;
 import android.util.Log;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -184,6 +186,7 @@ public class PowerUsageScanner extends Thread {
 			final int NU = uidStats.size();
 			for (int iu = 0; iu < NU; iu++){
 				Object u = uidStats.valueAt(iu);
+				
 				double power = 0;
 				long tcpBytesReceived = 0;
 				long tcpBytesSent = 0;
@@ -200,14 +203,13 @@ public class PowerUsageScanner extends Thread {
 				if(processStats.size() > 0){
 					for (Map.Entry<String, Object> ent: processStats.entrySet()){
 						packageWithHighestDrain = ent.getKey();
-						//if (!ent.getKey().contains("org.spot.android"))
-						//	continue;
-
+										
 						//initializing the array
 						if(packageWithHighestDrain!=null && powerData.get(packageWithHighestDrain)==null)
 							powerData.put(packageWithHighestDrain, new ArrayList<PowerEvent>());
 
 						Object ps = ent.getValue();
+						
 						final long userTime = (Long)Class.forName(PROC_CLASS).getMethod("getUserTime", java.lang.Integer.TYPE).invoke(ps, which);
 						final long systemTime = (Long)Class.forName(PROC_CLASS).getMethod("getSystemTime", java.lang.Integer.TYPE).invoke(ps, which);
 						final long foregroundTime = (Long)Class.forName(PROC_CLASS).getMethod("getForegroundTime", java.lang.Integer.TYPE).invoke(ps, which);
@@ -218,11 +220,6 @@ public class PowerUsageScanner extends Thread {
 						cpuTime += tmpCpuTime;
 //						Log.d(TAG, "CPU Time " + cpuTime);
 						power += processPower;
-
-						//						if (highestDrain < processPower){
-						//							highestDrain = processPower;
-						//							packageWithHighestDrain = ent.getKey();
-						//						}
 						power /= 1000;
 						
 						
@@ -237,8 +234,13 @@ public class PowerUsageScanner extends Thread {
 				//tcpBytesSent = (Long)Class.forName(UID_CLASS).getMethod("getTcpBytesSent",java.lang.Integer.TYPE).invoke(u, mStatsType_);
 				
 				//New method of getting the number of received/sent bytes
-				tcpBytesReceived = (Long)Class.forName(TRAFFIC_CLASS).getMethod("getTotalRxBytes", (Class[])null).invoke(u);
-				tcpBytesSent = (Long)Class.forName(TRAFFIC_CLASS).getMethod("getTotalTxBytes",(Class[])null).invoke(u);
+				int uid = (Integer)Class.forName(UID_CLASS).getMethod("getUid",  (Class[])null).invoke(u);
+				Log.d("UID", Integer.toString(uid));				
+				tcpBytesReceived = TrafficStats.getUidTcpRxBytes(uid);
+				tcpBytesSent = TrafficStats.getUidTcpTxBytes(uid);
+				
+				//tcpBytesReceived = (Long)Class.forName(TRAFFIC_CLASS).getMethod("getTotalRxBytes", (Class[])null).invoke(u);
+				//tcpBytesSent = (Long)Class.forName(TRAFFIC_CLASS).getMethod("getTotalTxBytes",(Class[])null).invoke(u);
 				Log.d("SENT/RECEIVED", "Received: " + Long.toString(tcpBytesReceived) + "\nSent: " + Long.toString(tcpBytesSent));
 				
 				
